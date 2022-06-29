@@ -16,7 +16,7 @@ import time
 
 # *** Путь до файла лога ***
 print('1. Select log file \n')
-file_path = easygui.fileopenbox()
+file_path = easygui.fileopenbox(filetypes = ['*.log', '*.log.*'])
 
 # Год регистрации лога - ввод снаружи
 print('\n Введите год регистрации log-файла, например, 2021 ')
