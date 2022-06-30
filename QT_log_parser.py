@@ -80,7 +80,6 @@ elif ( (num_of_req_str_sent == 0) & (num_of_req_str_received == 0) ):
     raise SystemExit()
 
 
-\
 # *** Выделение временной метки из массива линий qkdmetriclines ***
 time_array = []
 date_array = []
@@ -155,6 +154,7 @@ print('\nNumber of series', N_QKD_series, '\n')
 # Формирование словаря из каждой строки json => получаем список словарей json_all_data
 
 json_all_data = []
+json_all_keys = []
 for x in range(N_QKD_series):
     json_single_str_data = json.loads(QKD_Metrics_array[x])  # Формирование словаря из строки json
     json_all_data.append(json_single_str_data)
@@ -177,7 +177,6 @@ for x in range(N_QKD_series):
         json_all_data[x]['Timestamp'] = timestamp_array[x]  # Добавление абсолютного времени
         if (num_of_ids > 0):
             json_all_data[x]['Alice ID'] = alice_id_array[x]  # Добавление идентификатора QSS Point (Alice ID)
-
         print('No data in str[', x, ']')
 
 N_keys = len(json_all_keys)
@@ -229,6 +228,10 @@ except IOError:
     print("I/O error")
 
 print('\n Successfully writing CSV')
+
+
+# ****************************
+
 
 print('\n Для выхода нажми Enter')
 exit_var = input()
