@@ -90,7 +90,7 @@ timestamp_array = []
 for st in qkdmetriclines:
     search_result_datestamp = re.search(r'(?P<month>\b\w{3}\b)\W+(?P<day>\d+)', st)
     search_result_timestamp = re.search(r'(?P<hours>\d\d):(?P<minutes>\d\d):(?P<seconds>\d\d)', st)
-    print(search_result_timestamp)
+    # print(search_result_timestamp)
     month_value = search_result_datestamp.group('month')
     day_value = int( search_result_datestamp.group('day') )
     h_value = int( search_result_timestamp.group('hours') )
@@ -98,8 +98,8 @@ for st in qkdmetriclines:
     s_value = int( search_result_timestamp.group('seconds') )
 
     seconds_total = s_value + 60 * m_value + 60 * 60 * h_value + 24 * 60 * 60 * day_value
-    print('Date: month - ', month_value, 'day - ', day_value )
-    print('Total time is', seconds_total, 'seconds')
+    # print('Date: month - ', month_value, 'day - ', day_value )
+    # print('Total time is', seconds_total, 'seconds')
 
     date_array.append( str(year_value) + '-' + str(month_value) + '-' + str(day_value) )
     timestamp_array.append( search_result_timestamp.group('hours') + ':' + search_result_timestamp.group('minutes') + ':' + search_result_timestamp.group('seconds') )
@@ -111,19 +111,23 @@ for st in qkdmetriclines:
 time_start = time_array[0]
 for i in range(len(time_array)):
     time_array[i] = time_array[i] - time_start
-    print('Relative time after start [', i, ']:', time_array[i], 's')
-print('\nlength of time array = ', len(time_array), '\n')
+    # print('Relative time after start [', i, ']:', time_array[i], 's')
+# print('\nlength of time array = ', len(time_array), '\n')
 
+# **************************************************
 # *** Выделение Alice ID
+
 alice_id_array = []
 print('IDs of QSS Points:')
 if num_of_req_str_received > 0:
     for st in qkdmetriclines:
         search_result_idstamp = re.search(r'(?P<qk>QK_GENERATION_LOG).(?P<id>\w{10}).', st)
-        # print(search_result_idstamp)       #Вывод ID Алис, с которыми делались ключи
+        print(search_result_idstamp.group('id'))       #Вывод ID Алис, с которыми делались ключи
         alice_id_value = search_result_idstamp.group('id')
         alice_id_array.append(alice_id_value)
 num_of_ids = len(alice_id_array)
+if num_of_ids == 0 :
+    print('Warning: There is no ID data in this log', '\n')
 # print ('num of found IDs = ' + str(num_of_ids) )
 
 
@@ -134,7 +138,7 @@ q = 0
 for q_line in qkdmetriclines:
     json_only = re.search(r'(?P<json_str>\{.*\})', q_line) # поиск лога json в строке и запись его в группу 'json_str'
     if json_only:
-        print(json_only)
+        # print(json_only)
         QKD_Metrics_array.append(json_only.group('json_str'))
         print('QKD Metrics [', q, '] : ', QKD_Metrics_array[q])
         q = q + 1
@@ -144,9 +148,8 @@ for q_line in qkdmetriclines:
         print('QKD Metrics [', q, '] : ', QKD_Metrics_array[q])
         q = q + 1
 
-
 N_QKD_series = len(QKD_Metrics_array) # число попыток выработки КК
-print('\n Number of series', N_QKD_series, '\n')
+print('\nNumber of series', N_QKD_series, '\n')
 
 # ***************************************************************************
 # Формирование словаря из каждой строки json => получаем список словарей json_all_data
@@ -164,9 +167,9 @@ for x in range(N_QKD_series):
         if (num_of_ids > 0):
             json_all_data[x]['Alice ID'] = alice_id_array[x]  # Добавление идентификатора QSS Point (Alice ID)
 
-        print('json to dict str[', x, ']', json_all_data[x])
+        # print('json to dict str[', x, ']', json_all_data[x])
         json_all_keys = list( json_all_data[x].keys() )   # список ключей в текущем словаре
-        print('Keys (list of parameter):', json_all_keys)
+        # print('Keys (list of parameter):', json_all_keys)
     else:
         json_all_data[x]['Time after start, s'] = time_array[x]  # Добавление шкалы времени в словарь
         json_all_data[x]['NumOfSeries'] = x  # Добавление номера серии в словарь
@@ -182,7 +185,7 @@ print('Number of keys', N_keys)
 
 # *************************************************************************************
 # ЗАПИСЬ в файл общее:
-print('Input file path for optical log')
+print('\nInput file path for optical log')
 out_file_directory = easygui.diropenbox()
 # out_file_path = input()
 
@@ -197,7 +200,7 @@ par_separator = ';'
 # Записать шапку (названия параметров)
 for key in json_all_keys:
     out_txt_file.write(key + par_separator)
-    print(key, '\n')
+    # print(key, '\n')
 
 out_txt_file.write('\n') # переход на новую строку по завершении шапки
 
