@@ -44,11 +44,18 @@ def FindDatestamp(str, year_value):
     datestamp = year_value + '-' + month_value + '-' + day_value
     return datestamp
 
-def FindAliceID(str):
-    search_result_idstamp = re.search(r'(?P<qk>QK_GENERATION_LOG).(?P<id>\w{10}).', str)
+def FindAliceID(st):
+    if st.find('QK_GENERATION_LOG') >= 0:
+        search_result_idstamp = re.search(r'(?P<qk>QK_GENERATION_LOG).(?P<id>\w{10}).', st)
+    if st.find('Starting QKD protocol for point') >= 0:
+        search_result_idstamp = re.search(r'(?P<qk>Starting QKD protocol for point)\s(?P<id>\w{10}).', st)
+
     print(search_result_idstamp.group('id'))  # Вывод ID Алис, с которыми делались ключи
     alice_id_value = search_result_idstamp.group('id')
     return alice_id_value
+
+
+
 
 # ***********************************************************
 
@@ -89,6 +96,9 @@ metric_line = ''
 key_status = False
 
 for line in loglines:
+    if line.find('Starting QKD protocol for point') >= 0:
+        AliceID = FindAliceID(line)
+
     if (line.find('Key generation started') >= 0):
         if ((t_start != 0) and (t_end != 0)):
             delta_time_array.append(t_end - t_start)
@@ -99,7 +109,7 @@ for line in loglines:
             timestamp_start = ''
             t_end = 0
             timestamp_end = ''
-        AliceID = ID_empty
+        # AliceID = ID_empty
         key_status = 0
         t_start, timestamp_start = FindTimestamp(line)
         datestamp_array.append(FindDatestamp(line, year_in_log)) #дата записывается по каждому найденному старту
@@ -119,17 +129,21 @@ for line in loglines:
             print("t_end = ", t_end)
             print("t_start = ", t_start)
             print('key gen time = ', t_end - t_start)
-            if (line.find('QBerr') >= 0):
-                qkdmetriclines.append(line)
-            else:
-                qkdmetriclines.append('{"No_QBER_data":1}')
+
+            qkdmetriclines.append(line)
+            if (line.find('"Error":') >= 0):
+                print('QK generation errors')
+            # if (line.find('QBerr') >= 0):
+            #     qkdmetriclines.append(line)
+            # else:
+            #     qkdmetriclines.append('{"No_QBER_data":1}')
             t_start = 0 # обнуление времен начала/окончания генерации - переход к новой генерации
             timestamp_start = ''
             t_end = 0
             timestamp_end = ''
             AliceID = ID_empty
         else:
-            print('double qkdom Metrics')
+            print('Double qkdom Metrics')
 
     if (line.find('Key generation ended') >= 0):
         if ~key_status:
