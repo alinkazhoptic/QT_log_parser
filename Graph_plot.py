@@ -17,7 +17,7 @@ def SKR_calculation(indata):
     # print(type(key_gen_time_array))
     print('Key generation time [s]:', key_gen_time_array)
     print('Secret key length array [bit]:', secret_key_length)
-    secret_key_rate = np.zeros((1, N))
+    secret_key_rate = np.zeros(N)
     for q in range(N):
         secret_key_rate[q] = secret_key_length[q]/key_gen_time_array[q]
 
@@ -56,7 +56,7 @@ def QKD_params_plotting(input_dataframe, time_array, SKR, alice_id):
     plt.rcParams['font.size'] = '8'
     plt.rcParams['font.family'] = 'Arial'
 
-    fig1.suptitle('QKD output parameters for some Bob and Alice ID ' + alice_id, fontsize=10)
+    fig1.suptitle('QKD output parameters for some Bob and Alice ID ' + str(alice_id), fontsize=10)
 
     ax_QBER = plt.subplot(321)
     # ax_QBER.set_title('Main parameters')
@@ -138,12 +138,14 @@ for idx in alice_id_list:
     Abs_time_array = np.transpose( range(N_points) )
     fig_for_idx = QKD_params_plotting(data_id, Abs_time_array, SecretKeyRate, idx) # Строим графики для одной Алисы в одном окне
     if (save_req == 'Y') or (save_req == 'y'):
-        out_filename = 'QKD with Alice ' + idx
+        out_filename = 'QKD with Alice ' + str(idx)
         PDFsaving(out_file_directory, out_filename, fig_for_idx) # Сохраняем графики в pdf
     else:
         print('Warning: graphs didn\'t save')
 
 plt.show() # Отображаем графики
 
+print('\n Press Enter for exit')
+exit_var = input()
 
 raise SystemExit()

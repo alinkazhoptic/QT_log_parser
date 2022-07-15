@@ -80,7 +80,8 @@ timestamp_array = []
 datestamp_array = []
 
 alice_id_array = []
-AliceID = '0'
+ID_empty = '0x0'
+AliceID = ID_empty
 num_of_ids = 0
 
 metric_line = ''
@@ -98,7 +99,7 @@ for line in loglines:
             timestamp_start = ''
             t_end = 0
             timestamp_end = ''
-        AliceID = '0'
+        AliceID = ID_empty
         key_status = 0
         t_start, timestamp_start = FindTimestamp(line)
         datestamp_array.append(FindDatestamp(line, year_in_log)) #дата записывается по каждому найденному старту
@@ -126,7 +127,7 @@ for line in loglines:
             timestamp_start = ''
             t_end = 0
             timestamp_end = ''
-            AliceID = '0'
+            AliceID = ID_empty
         else:
             print('double qkdom Metrics')
 
@@ -153,7 +154,7 @@ for line in loglines:
             timestamp_start = ''
             t_end = 0
             timestamp_end = ''
-            AliceID = '0'
+            AliceID = ID_empty
 
 
 # *** Проверка конца файла: ***
@@ -301,9 +302,7 @@ except IOError:
 
 print('\n Successfully writing CSV')
 
-
 # ****************************
-
 
 print('\n Press Enter for exit')
 exit_var = input()
