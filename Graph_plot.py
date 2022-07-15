@@ -46,6 +46,7 @@ def QKD_params_plotting(input_dataframe, time_array, SKR, QBER, alice_id):
     grid_width = 0.5
     # Marker parameters
     marker_size = 10
+    marker_size_on_line = 4
 
     # Labels
     x_name = 'Time points'
@@ -88,15 +89,16 @@ def QKD_params_plotting(input_dataframe, time_array, SKR, QBER, alice_id):
 
     ax_Eff = plt.subplot(322)
     # ax_Eff.set_title('Technical parameters')
-    ax_Eff.plot(time_array, input_dataframe['APD0 Eff clicks'], marker='D', color=c_green, linewidth=line_width) #, s=marker_size )
-    ax_Eff.plot(time_array, input_dataframe['APD1 Eff clicks'], marker='D', color=c_blue, linewidth=line_width) #, s=marker_size )
+    ax_Eff.plot(time_array, input_dataframe['APD0 Eff clicks'], marker='D', color=c_green, linewidth=line_width, markersize=marker_size_on_line) #, s=marker_size )
+    ax_Eff.plot(time_array, input_dataframe['APD1 Eff clicks'], marker='D', color=c_blue, linewidth=line_width, markersize=marker_size_on_line) #, s=marker_size )
+    ax_Eff.plot(time_array, 0.00001 * np.ones(N), color=c_red, linestyle='--', linewidth=line_width)
     ax_Eff.set(ylabel='Efficiency, SPAD counts/pulse')
-    ax_Eff.legend(['SPAD 0', 'SPAD 1'], loc='upper right')
+    ax_Eff.legend(['SPAD 0', 'SPAD 1', 'Critical lower bound'], loc='upper right')
     ax_Eff.grid(True, linestyle=':', linewidth=grid_width)
 
     ax_Flare = plt.subplot(324, sharex=ax_Eff)
-    ax_Flare.plot(time_array, input_dataframe['APD0 flare'], marker='o', color=c_green, linewidth=line_width) #, s=marker_size )
-    ax_Flare.plot(time_array, input_dataframe['APD1 flare'], marker='o', color=c_blue, linewidth=line_width) #, s=marker_size )
+    ax_Flare.plot(time_array, input_dataframe['APD0 flare'], marker='o', color=c_green, linewidth=line_width, markersize=marker_size_on_line) #, s=marker_size )
+    ax_Flare.plot(time_array, input_dataframe['APD1 flare'], marker='o', color=c_blue, linewidth=line_width, markersize=marker_size_on_line) #, s=marker_size )
     ax_Flare.plot(time_array, 0.00001*np.ones(N), color=c_red, linestyle='--', linewidth=line_width)
     ax_Flare.set(ylabel='Flare clicks, cnt/pulse')
     ax_Flare.legend(['SPAD 0', 'SPAD 1', 'Critical upper bound'], loc='upper right')
@@ -104,8 +106,8 @@ def QKD_params_plotting(input_dataframe, time_array, SKR, QBER, alice_id):
 
 
     ax_Vis = plt.subplot(326, sharex=ax_Eff)
-    ax_Vis.plot(time_array, input_dataframe['APD0 visibility'], marker='s', color=c_green, linewidth=line_width)#, s=marker_size)
-    ax_Vis.plot(time_array, input_dataframe['APD1 visibility'], marker='s', color=c_blue, linewidth=line_width) #, s=marker_size )
+    ax_Vis.plot(time_array, input_dataframe['APD0 visibility'], marker='s', color=c_green, linewidth=line_width, markersize=marker_size_on_line)#, s=marker_size)
+    ax_Vis.plot(time_array, input_dataframe['APD1 visibility'], marker='s', color=c_blue, linewidth=line_width, markersize=marker_size_on_line) #, s=marker_size )
     ax_Vis.plot(time_array, 80*np.ones(N), color=c_red, linestyle='--', linewidth=line_width)
     ax_Vis.set(xlabel=x_name, ylabel='Visibility, %')
     ax_Vis.legend(['SPAD 0', 'SPAD 1', 'Critical lower bound'], loc='upper right')
@@ -177,7 +179,7 @@ for idx in alice_id_list:
     y0 = 0.8
     for z in range(len(Errors_text)):
         y = y0 - z*0.025
-        err_str_out = str(Errors_text[z])+'\n'
+        err_str_out = str(z) + '. ' + str(Errors_text[z])+'\n'
         ax_err.text(x0, y, err_str_out, fontsize=8)
     ax_err.axis('off')
     # ax_err.text(0.1, 0.8, str(Errors_text), fontsize=8)
