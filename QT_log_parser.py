@@ -112,7 +112,7 @@ for line in loglines:
         # AliceID = ID_empty
         key_status = 0
         t_start, timestamp_start = FindTimestamp(line)
-        datestamp_array.append(FindDatestamp(line, year_in_log)) #дата записывается по каждому найденному старту
+        # datestamp_array.append(FindDatestamp(line, year_in_log)) #дата записывается по каждому найденному старту
         print('start time - ', timestamp_start, ' = ', t_start, ' s')
 
     if ( (line.find('qkdom') >= 0) and (line.find('Metrics:') >= 0) ) :
@@ -123,6 +123,7 @@ for line in loglines:
             t_end, timestamp_end = FindTimestamp(line)
             delta_time_array.append(t_end - t_start)
             timestamp_array.append(timestamp_sent)
+            datestamp_array.append(FindDatestamp(line, year_in_log))  # дата записывается по каждой найденной отправке метрик
             alice_id_array.append(AliceID)
             # datestamp_array.append(FindDatestamp(line, year_in_log))
             print('end time - ', timestamp_end, ' = ', t_end, ' s')
@@ -162,6 +163,8 @@ for line in loglines:
             t_received, timestamp_received = FindTimestamp(line)
             delta_time_array.append(t_end - t_start)
             timestamp_array.append(timestamp_received)
+            datestamp_array.append(
+                FindDatestamp(line, year_in_log))  # дата записывается по каждому приему метрик
             alice_id_array.append(AliceID)
             qkdmetriclines.append(line)
             t_start = 0  # обнуление времен начала/окончания генерации - переход к новой генерации
@@ -185,7 +188,7 @@ if t_start != 0: #генерация началась
         alice_id_array.append(AliceID)
 
 # *** Проверка длин массивов ***
-print('Arrays length checking^')
+print('\n Arrays length checking:')
 print('Datestamp - ', len(datestamp_array))
 print('Timestamp - ', len(timestamp_array))
 print('Key gen time - ', len(delta_time_array))
@@ -195,14 +198,16 @@ print('QKD Metrics - ', len(qkdmetriclines))
 
 if (num_of_req_str_sent != num_of_req_str_received): # проверка равенства числа полученных УК логов с количеством отправленных
     print('The number of sent logs is not equal to the number of received logs')
+    print('n_sent = ', num_of_req_str_sent, ' n_recieved = ', num_of_req_str_received, '\n')
 
 if (qkdmetriclines != []):
     print('Parsing completed successfully!')
+    print(len(qkdmetriclines), 'series QKD metric lines founded')
     if (num_of_req_str_sent == 0) :
         print ('Warning: There is no "qkdom Metrics" in this log')
     if (num_of_req_str_received == 0) :
         print ('Warning: There is no "QK_GENERATION_LOG" in this log')
-    # print(len(qkdmetriclines), 'series lines')
+
 
 elif ( (num_of_req_str_sent == 0) & (num_of_req_str_received == 0) ):
     print('\nRecuired "qkdom Metrics" and "QK_GENERATION_LOG" does not exist in this log-file')
@@ -255,6 +260,8 @@ for x in range(N_QKD_series):
     if json_all_data[x] == []:
         print('No data in str[', x, ']')
         # print('json to dict str[', x, ']', json_all_data[x])
+    else:
+        print('Date and time filling for line ', x)
 
     json_all_data[x]['NumOfSeries'] = x  # Добавление номера серии в словарь
     json_all_data[x]['Key gen time, s'] = delta_time_array[x]  # Добавление шкалы времени в словарь
@@ -262,6 +269,7 @@ for x in range(N_QKD_series):
     json_all_data[x]['Timestamp'] = timestamp_array[x]  # Добавление абсолютного времени
     if (N_ids > 0):
         json_all_data[x]['Alice ID'] = alice_id_array[x]  # Добавление идентификатора QSS Point (Alice ID)
+
 
     json_all_keys.update(json_all_data[x].keys())
     # print('Keys (list of parameter):', json_all_keys)
